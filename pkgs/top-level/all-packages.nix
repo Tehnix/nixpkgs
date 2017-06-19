@@ -5674,6 +5674,7 @@ with pkgs;
 
   llvmPackages_4 = callPackage ../development/compilers/llvm/4 ({
     inherit (stdenvAdapters) overrideCC;
+    buildTools = buildPackages.llvmPackages_4.tools;
   } // stdenv.lib.optionalAttrs stdenv.isDarwin {
     cmake = cmake.override { isBootstrap = true; };
     libxml2 = libxml2.override { pythonSupport = false; };
