@@ -1,5 +1,6 @@
-{ stdenv, fetchurl, bison, m4
-, fetchpatch, autoreconfHook, help2man
+{ stdenv, buildPackages
+, fetchurl, fetchPatch, fetchpatch, autoreconfHook, help2man
+, bison, m4
 }:
 
 stdenv.mkDerivation rec {
@@ -19,11 +20,11 @@ stdenv.mkDerivation rec {
         + "/tools/flex/patches/200-build-AC_USE_SYSTEM_EXTENSIONS-in-configure.ac.patch";
     sha256 = "1aarhcmz7mfrgh15pkj6f7ikxa2m0mllw1i1vscsf1kw5d05lw6f";
   })];
-  nativeBuildInputs = [ autoreconfHook help2man ];
 
+  __depsBuildBuild = [ buildPackages.stdenv.cc ];
+  nativeBuildInputs = [ autoreconfHook help2man m4 ];
   buildInputs = [ bison ];
-
-  propagatedBuildInputs = [ m4 ];
+  nativePropagatedBuildInputs = [ m4 ];
 
   postConfigure = stdenv.lib.optionalString (stdenv.isDarwin || stdenv.isCygwin) ''
     sed -i Makefile -e 's/-no-undefined//;'
