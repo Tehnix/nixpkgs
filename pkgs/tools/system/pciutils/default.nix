@@ -11,7 +11,11 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ pkgconfig ];
   buildInputs = [ zlib kmod which ];
 
-  makeFlags = "SHARED=yes PREFIX=\${out}";
+  # We'll strip the binaries ourselves if we want to
+  postPatch = '' substituteInPlace Makefile --replace 'STRIP=-s' "STRIP=" '';
+
+  # The build system is missing a -lz by default
+  makeFlags = "SHARED=yes PREFIX=\${out} CC=${stdenv.cc.prefix}gcc";
 
   installTargets = "install install-lib";
 
