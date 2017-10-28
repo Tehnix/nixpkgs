@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, fetchpatch, bc, dtc, openssl, python2
+{ stdenv, buildPackages, fetchurl, fetchpatch, bc, dtc, openssl, python2
 , hostPlatform
 }:
 
@@ -39,6 +39,10 @@ let
       })
     ];
 
+    nativeBuildInputs = [ buildPackages.stdenv.cc buildPackages.openssl bc dtc python2 ];
+
+    hardeningDisable = [ "all" ];
+
     postPatch = ''
       patchShebangs tools
     '';
@@ -47,10 +51,8 @@ let
 
     hardeningDisable = [ "all" ];
 
-    makeFlags = [ "DTC=dtc" ] ++ extraMakeFlags;
-
     configurePhase = ''
-      make ${defconfig}
+      make $makeFlags ${defconfig}
     '';
 
     installPhase = ''
@@ -65,12 +67,14 @@ let
     enableParallelBuilding = true;
     dontStrip = true;
 
-    crossAttrs = {
-      makeFlags = [
-        "ARCH=${hostPlatform.platform.kernelArch}"
-        "CROSS_COMPILE=${stdenv.cc.targetPrefix}"
-      ];
-    };
+    makeFlags = [
+      "DTC=dtc"
+    ] ++ stdenv.lib.optionals (stdenv.buildPlatform != stdenv.hostPlatform) [
+      "CROSS_COMPILE=${stdenv.cc.prefix}"
+      "HOSTCC=${buildPackages.stdenv.cc.prefix}gcc"
+      "HOSTCFLAGS+=-I${stdenv.lib.getDev buildPackages.openssl}/include"
+      "HOSTLDFLAGS+=-L${stdenv.lib.getLib buildPackages.openssl}/lib"
+    ] ++ extraMakeFlags;
 
     meta = with stdenv.lib; {
       homepage = http://www.denx.de/wiki/U-Boot/;
