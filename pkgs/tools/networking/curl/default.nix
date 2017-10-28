@@ -73,8 +73,8 @@ stdenv.mkDerivation rec {
     ++ stdenv.lib.optional c-aresSupport "--enable-ares=${c-ares}"
     ++ stdenv.lib.optional gssSupport "--with-gssapi=${kerberos.dev}";
 
-  CXX = "c++";
-  CXXCPP = "c++ -E";
+  CXX = "${stdenv.cc.prefix}c++";
+  CXXCPP = "${stdenv.cc.prefix}c++ -E";
 
   postInstall = ''
     moveToOutput bin/curl-config "$dev"
