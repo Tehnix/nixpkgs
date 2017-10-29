@@ -103,8 +103,14 @@ stdenv.mkDerivation {
     using mpi : ${mpi}/bin/mpiCC ;
     EOF
   '' + optionalString (hostPlatform != buildPlatform) ''
-    cat << EOF >> user-config.jam
-    using gcc : cross : ${stdenv.cc.targetPrefix}c++ ;
+    cat << EOF > user-config.jam
+    using gcc : cross : ${stdenv.cc.targetPrefix}g++ ;
+    EOF
+  '';
+
+  postConfigure = optionalString (hostPlatform != buildPlatform) ''
+    cat << EOF > project-config.jam
+    using gcc : cross : ${stdenv.cc.targetPrefix}g++ ;
     EOF
   '';
 
