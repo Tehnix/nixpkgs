@@ -448,12 +448,6 @@ stdenv.mkDerivation ({
     then "install-strip"
     else "install";
 
-  /* For cross-built gcc (build != host == target) */
-  crossAttrs = {
-    dontStrip = true;
-    buildFlags = "";
-  };
-
   # http://gcc.gnu.org/install/specific.html#x86-64-x-solaris210
   ${if hostPlatform.system == "x86_64-solaris" then "CC" else null} = "gcc -m64";
 
