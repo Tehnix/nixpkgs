@@ -712,6 +712,7 @@ default-package-overrides:
   - freenect ==1.2.1
   - freer ==0.2.4.1
   - freer-effects ==0.3.0.1
+  - freer-simple ==1.0.0.0
   - friendly-time ==0.4
   - frisby ==0.2
   - from-sum ==0.2.1.0
